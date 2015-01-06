@@ -17,7 +17,7 @@ def _content_line(items, column_widths):
             c.append(' ' * column_widths[li])
         else:
             c.append(_pad_ellipse(repr(items[li]), column_widths[li]))
-    return '| ' + ' | '.join(c) + ' |'
+    return '| ' + ' : '.join(c) + ' |'
 
 
 def _tabulize2d_cols(o, column_widths, sort=False):
