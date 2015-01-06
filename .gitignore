@@ -1,0 +1,9 @@
+/.eggs
+/.build
+/.dist
+*.pyc
+*.egg
+*.egg-info
+.coverage
+/venv
+/htmlcov
