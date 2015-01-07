@@ -1,49 +1,54 @@
 
-def downscale(width_list, target_total, min_column_width=10):
-    deficit = sum(width_list) - target_total
+def downscale(width_list, target_width, min_column_width=10):
+    """Selectively reduce width of the widest columns in order to fit all columns into the
+    target_width.
+    """
+
+    deficit = sum(width_list) - target_width
     if deficit <= 0:
         return width_list
 
     if len(width_list) == 1:
-        return [target_total]
+        return [target_width]
 
     cp = width_list[:]
-    current_deficit = deficit
-    while(current_deficit > 0):
-        biggest, biggesti = 0, 0
-        secondbiggest = 0
+    while(deficit > 0):
+        widest, widesti = 0, 0
+        secondwidest = 0
 
         for i, v in enumerate(cp):
-            if v > biggest:
-                biggesti = i
-                secondbiggest = biggest
-                biggest = v
-        if biggest <= min_column_width:
+            if v >= widest:
+                widesti = i
+                secondwidest = widest
+                widest = v
+        if widest <= min_column_width:
             break
 
-        if secondbiggest < min_column_width:
-            secondbiggest = min_column_width
+        if secondwidest < min_column_width:
+            secondwidest = min_column_width
 
-        if biggest > secondbiggest:
-            if (biggest - secondbiggest) >= current_deficit:
-                cp[biggesti] = biggest - current_deficit
+        if widest > secondwidest:
+            if (widest - secondwidest) >= deficit:
+                cp[widesti] = widest - deficit
             else:
-                cp[biggesti] = secondbiggest
-        elif biggest > (min_column_width * 2):
-            cp[biggesti] = int(biggest * 0.75)
+                cp[widesti] = secondwidest
+        elif widest > (min_column_width * 2):
+            cp[widesti] = int(widest * 0.75)
         else:
-            cp[biggesti] = biggest - 1
+            cp[widesti] = widest - 1
 
-        current_deficit -= (biggest - cp[biggesti])
+        deficit -= (widest - cp[widesti])
 
     return cp
 
 
-def upscale(width_list, target_total):
+def upscale(width_list, target_width):
+    """Scale columns to fill target_width"""
+
     total = sum(width_list)
-    ratio = target_total / float(total)
+    ratio = target_width / float(total)
     scaled_widths = map(lambda w: int(w*ratio), width_list)
-    scaled_widths[-1] = scaled_widths[-1] + (target_total - sum(scaled_widths))
+    scaled_widths[-1] = scaled_widths[-1] + (target_width - sum(scaled_widths))
     return scaled_widths
 
 
@@ -58,8 +63,6 @@ def adjust_columns(content_widths, target_width, min_column_width=8):
 
     # determine target_width minus margins
     target_inner_width = target_width - margins
-    if target_inner_width < 0:
-        raise RuntimeError('Cannot possibly fit table into that space!')
 
     # if there is no deficit, return the content_widths since these are fine
     current_width = sum(content_widths) + margins

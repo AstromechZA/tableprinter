@@ -33,6 +33,6 @@ setup(
     setup_requires=['flake8'],
 
     # tests
-    tests_require=['pytest-cov', 'pytest'],
+    tests_require=['pytest-cov', 'pytest', 'mock'],
     cmdclass={'test': PyTest}
 )

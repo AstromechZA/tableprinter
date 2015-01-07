@@ -14,6 +14,12 @@ def get_terminal_width(fallback_width=80):
 
 
 def pad_ellipse(content, width, align=''):
+    """Position string content in a string of the given width. Replace overflow with '..'.
+
+    :param content: the text
+    :param width: the desired width
+    :param align: the string alignment. '<' is left-aligned, '>' is right aligned, '^' is centered.
+    """
     if len(content) > width:
         return "{}..".format(content[:width-2])
     return "{{:{}{}s}}".format(align, width).format(content)

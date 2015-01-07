@@ -10,43 +10,74 @@ class Table(object):
                  column_names=None):
         self.shape = (None, None)
         self.has_column_names = False
+        self.column_names = None
         self.compact = compact
         self.set_data(data)
         self.set_title(title)
         self.set_column_names(column_names)
 
-        if sort or sort_reverse or sort_key is not None:
+        # apply the sort function on the data if data was provided
+        if self.data is not None and (sort or sort_reverse or sort_key is not None):
             self.sort_data(key=sort_key, reverse=sort_reverse)
 
     def set_title(self, title):
+        """Set the title displayed above the Table.
+
+        Set it to None in order to remove the title.
+        """
         self.title = title
 
     def set_data(self, data):
+        """Set the data displayed by the table"""
         self.data, self.shape = extract2d(data)
 
     def set_column_names(self, column_names):
+        """Set an array of column names for the Table, or remove column names by providing None.
+
+        Columns will be added in order to match the number of column names provided.
+        """
         if column_names is not None:
             self.column_names = column_names
             self.has_column_names = True
         else:
             self.has_column_names = False
 
-    def set_column_name(self, column_index, column_name):
-        raise NotImplemented()
-
     def set_compact(self, b):
+        """Set the compact flag on the Table.
+
+        If compact is True, borders will not be drawn between rows.
+        """
         self.compact = b
 
     def sort_data(self, key=None, reverse=False):
+        """Apply a sort to the data contained by the table.
+
+        :param key: a function to apply to each row before rows are sorted
+        :param reverse: reverse the order
+        """
         if self.data is None:
             raise RuntimeError('No data to sort.')
         else:
             self.data.sort(key=key, reverse=reverse)
 
     def __repr__(self):
-        return "{}(title={}, shape={})".format(self.__class__.__name__, self.title, self.shape)
+        """Returns a simple representation of the Table object.
+
+        String contains Table title, shape, column names, sort. Other fields are ignored since
+        they are too long.
+        """
+        return "{}(title={}, shape={}, column_names={}, sort={})".format(
+            self.__class__.__name__,
+            self.title,
+            self.shape,
+            self.column_names,
+            self.sort)
 
     def __str__(self):
+        """Return the 2d Table representation.
+
+        Use this for printing the table. (eg: print Table())
+        """
         lines = []
         max_table_width = utils.get_terminal_width()
 
@@ -55,10 +86,10 @@ class Table(object):
         else:
             column_widths = get_column_widths(self.data)
 
-        ttw = sum(column_widths) + 4 + 3 * (len(column_widths) - 1)
-        if ttw > max_table_width:
+        current_table_width = sum(column_widths) + 4 + 3 * (len(column_widths) - 1)
+        if current_table_width > max_table_width:
             column_widths = adjust_columns(column_widths, max_table_width)
-        elif self.title is not None and len(self.title) > (ttw - 4):
+        elif self.title is not None and len(self.title) > (current_table_width - 4):
             column_widths = adjust_columns(column_widths, min(len(self.title) + 4, max_table_width))
 
         if self.title is not None:
