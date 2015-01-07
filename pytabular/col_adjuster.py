@@ -47,14 +47,14 @@ def upscale(width_list, target_total):
     return scaled_widths
 
 
-def adjust_columns(content_widths, target_width, inter_column_margin=3, outside_margins=2, min_column_width=8):
+def adjust_columns(content_widths, target_width, min_column_width=8):
     """This method takes in a list of content_widths, representing current column widths, as well
     as a target table width, and returns an adjusted version of content_widths which fits into the
     target_width.
     """
 
     # first identify defecit
-    margins = 2 * outside_margins + (len(content_widths) - 1) * inter_column_margin
+    margins = 4 + (len(content_widths) - 1) * 3
 
     # determine target_width minus margins
     target_inner_width = target_width - margins
