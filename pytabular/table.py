@@ -8,7 +8,7 @@ class Table(object):
     def __init__(self, data=None, title=None, compact=False,
                  sort=False, sort_reverse=False, sort_key=None,
                  column_names=None):
-        self.size = (None, None)
+        self.shape = (None, None)
         self.has_column_names = False
         self.compact = compact
         self.set_data(data)
@@ -22,7 +22,7 @@ class Table(object):
         self.title = title
 
     def set_data(self, data):
-        self.data, self.size = extract2d(data)
+        self.data, self.shape = extract2d(data)
 
     def set_column_names(self, column_names):
         if column_names is not None:
@@ -42,6 +42,9 @@ class Table(object):
             raise RuntimeError('No data to sort.')
         else:
             self.data.sort(key=key, reverse=reverse)
+
+    def __repr__(self):
+        return "{}(title={}, shape={})".format(self.__class__.__name__, self.title, self.shape)
 
     def __str__(self):
         lines = []

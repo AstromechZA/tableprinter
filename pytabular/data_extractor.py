@@ -2,10 +2,11 @@ import types
 
 
 def extract2d(obj):
-    num_rows = len(obj)
+    num_rows = 0
     num_cols = 0
     output = []
     if isinstance(obj, list) or isinstance(obj, tuple) or isinstance(obj, set):
+        num_rows = len(obj)
         for row in obj:
             if isinstance(row, list) or isinstance(row, tuple) or isinstance(row, set):
                 output.append(row)
@@ -15,6 +16,7 @@ def extract2d(obj):
                 output.append([row])
         return output, (num_rows, num_cols)
     elif isinstance(obj, dict) or isinstance(obj, types.DictProxyType):
+        num_rows = len(obj)
         num_cols = 2
         for k in obj.keys():
             output.append([k, obj[k]])
