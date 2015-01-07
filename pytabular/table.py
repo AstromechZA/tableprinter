@@ -39,10 +39,6 @@ class Table(object):
         else:
             self.data.sort(key=key, reverse=reverse)
 
-    def gen_seamless_border(self, column_widths):
-        l = sum(column_widths) + (len(column_widths) - 1) * 3
-        return '+' + '=' * l + '+'
-
     def __str__(self):
         lines = []
         column_widths = get_column_widths(self.data)
