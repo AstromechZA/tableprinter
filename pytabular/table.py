@@ -66,12 +66,11 @@ class Table(object):
         String contains Table title, shape, column names, sort. Other fields are ignored since
         they are too long.
         """
-        return "{}(title={}, shape={}, column_names={}, sort={})".format(
+        return "%s(title=%r, shape=%r, column_names=%r)" % (
             self.__class__.__name__,
             self.title,
             self.shape,
-            self.column_names,
-            self.sort)
+            self.column_names)
 
     def __str__(self):
         """Return the 2d Table representation.
