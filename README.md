@@ -1,5 +1,5 @@
 # tableprinter - 1.0
-This is a library for outputting a two-dimensional representation of a
+This is a Python library for outputting a two-dimensional representation of a
 dataset using ascii characters. 
 
 For example:
