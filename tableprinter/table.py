@@ -1,6 +1,6 @@
-from pytabular import utils
-from pytabular.col_adjuster import adjust_columns
-from pytabular.data_extractor import extract2d, get_column_widths
+from tableprinter import utils
+from tableprinter.col_adjuster import adjust_columns
+from tableprinter.data_extractor import extract2d, get_column_widths
 
 
 class Table(object):

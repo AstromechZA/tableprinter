@@ -1,15 +1,15 @@
 
 from mock import patch
-from pytabular import utils
+from tableprinter import utils
 
-@patch('pytabular.utils.subprocess')
+@patch('tableprinter.utils.subprocess')
 def test_get_terminal_width_nominal(subp_mock):
     subp_mock.check_output.return_value = '100\n'
 
     assert utils.get_terminal_width() == 100
     subp_mock.check_output.assert_called_once_with(['tput', 'cols'])
 
-@patch('pytabular.utils.subprocess')
+@patch('tableprinter.utils.subprocess')
 def test_get_terminal_width_error(subp_mock):
     subp_mock.check_output.side_effect = RuntimeError()
 

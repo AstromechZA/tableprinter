@@ -1,5 +1,5 @@
 import pytest
-from pytabular.data_extractor import extract2d, get_column_widths
+from tableprinter.data_extractor import extract2d, get_column_widths
 
 def test_data_extractor():
 

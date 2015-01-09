@@ -1,6 +1,6 @@
 import pytest
 from mock import patch
-from pytabular.table import Table
+from tableprinter.table import Table
 
 def test_construct():
     t = Table([['hello', 'world']])
@@ -51,7 +51,7 @@ def test_tables():
     print Table(data, column_names=['c1', 'c2', 'c3'])
     print Table(data, column_names=['c1', 'c2'])
 
-    with patch('pytabular.utils.get_terminal_width') as tw_mock:
+    with patch('tableprinter.utils.get_terminal_width') as tw_mock:
         tw_mock.return_value = 30
 
         data = [

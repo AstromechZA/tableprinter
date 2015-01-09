@@ -23,10 +23,10 @@ class PyTest(TestCommand):
 
 setup(
     # package info
-    name='pytabular',
+    name='tableprinter',
     version='1.0',
     description='',
-    packages=['pytabular'],
+    packages=['tableprinter'],
 
     # requirements
     install_requires=[],

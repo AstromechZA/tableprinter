@@ -1,4 +1,4 @@
-from pytabular.col_adjuster import adjust_columns, downscale, upscale
+from tableprinter.col_adjuster import adjust_columns, downscale, upscale
 
 def test_downscale():
     assert downscale([30], 40) == [30]
