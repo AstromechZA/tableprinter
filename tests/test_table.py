@@ -30,31 +30,98 @@ def test_repr():
     t = Table([['hello', 'world']], title='Test Table')
     assert repr(t) == "Table(title='Test Table', shape=(1, 2), column_names=None)"
 
-def test_tables():
-    data = [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9]
+def test__balance_columns_normal():
+    t = Table([['hello', 8], ['this is a thing', 10]])
+    assert t._balance_columns(False) == [17, 2]
+
+def test__balance_columns_with_colnames():
+    t = Table([['hello', 8], ['this is a thing', 10]], column_names=['words', 'numbers'])
+    assert t._balance_columns(False) == [17, 7]
+
+def test__balance_columns_with_title():
+    t = Table([['hello', 8], ['this is a thing', 10]], title='A fairly long title. Longer than content.')
+    assert t._balance_columns(False) == [34, 4]
+
+def test__balance_columns_with_multiline_title():
+    t = Table([['hello', 8], ['this is a thing', 10]], title=['A fairly' , 'long title. Longer than content.'])
+    assert t._balance_columns(False) == [25, 4]
+
+def test__title_lines():
+    t = Table([[]], title='Some title')
+    assert list(t._title_lines(20, False)) == [
+        '+==================+',
+        '|    Some title    |',
     ]
 
-    print Table(data, title='A longer title with words.')
-    print Table(data, title='compact', compact=True)
-    print Table(data, title='reversed', sort_reverse=True)
-
-    data = [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7]
+def test__title_lines_bold():
+    t = Table([[]], title='Some title')
+    assert list(t._title_lines(20, True)) == [
+        '+==================+',
+        '| \033[1m   Some title   \033[22m |',
     ]
 
-    print Table(data, column_names=['c1', 'c2', 'c3'])
-    print Table(data, column_names=['c1', 'c2'])
+def test__title_lines_multi():
+    t = Table([[]], title=['Some title', 'sub-title'])
+    assert list(t._title_lines(20, False)) == [
+        '+==================+',
+        '|    Some title    |',
+        '|    sub-title     |'
+    ]
 
-    with patch('tableprinter.utils.get_terminal_width') as tw_mock:
-        tw_mock.return_value = 30
+def test__column_name_lines():
+    t = Table([[]], column_names=['Column 1', 'Column 2', 'Column 3'])
 
-        data = [
-            ['some fairly long string', 'another longish string']
-        ]
+    assert list(t._column_name_lines([10, 8, 7, 5])) == [
+        '| Column 1   | Column 2 | Colum.. |       |'
+    ]
 
-        print Table(data, column_names=['c1', 'c2'])
+def test__cell_row_lines():
+    t = Table([[]])
+
+    assert list(t._cell_row_lines([10, 5, 5], ['thing', 'thing'])) == [
+        "| 'thing'    : 'th.. :       |"
+    ]
+
+def test_lines():
+    t = Table([[1,2]])
+
+    assert list(t.lines()) == [
+        '+===+===+',
+        '| 1 : 2 |',
+        '+===+===+',
+    ]
+
+def test_lines_2():
+    t = Table([[1,2], [3]])
+
+    assert list(t.lines()) == [
+        '+===+===+',
+        '| 1 : 2 |',
+        '+---+---+',
+        '| 3 :   |',
+        '+===+===+',
+    ]
+
+def test_lines_with_colnames():
+    t = Table([[1,2]], column_names=['Number'])
+    assert list(t.lines()) == [
+        '+========+===+',
+        '| Number |   |',
+        '+========+===+',
+        '| 1      : 2 |',
+        '+========+===+'
+    ]
+
+def test_lines_with_title():
+    t = Table([[1,2]], title='Numbers')
+    assert list(t.lines()) == [
+        '+=========+',
+        '| \x1b[1mNumbers\x1b[22m |',
+        '+====+====+',
+        '| 1  : 2  |',
+        '+====+====+'
+    ]
+
+def test___str__():
+    t = Table([[1,2]])
+    assert str(t) == '+===+===+\n| 1 : 2 |\n+===+===+'
