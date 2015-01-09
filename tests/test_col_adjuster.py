@@ -14,10 +14,10 @@ def test_upscale():
 
 def test_adjust_columns():
     # exact match
-    assert adjust_columns([10, 10], 27) == [10,10]
+    assert adjust_columns([10, 10], 20) == [10,10]
 
     # require upscale
-    assert adjust_columns([10, 10], 60) == [26, 27]
+    assert adjust_columns([10, 10], 60) == [30, 30]
 
     # require downscale
-    assert adjust_columns([80, 80], 120) == [53, 60]
+    assert adjust_columns([80, 80], 125) == [65, 60]
