@@ -7,9 +7,8 @@ class Table(object):
 
     MAX_TABLE_WIDTH = 1000
 
-    def __init__(self, data=None, title=None, compact=False,
-                 sort=False, sort_reverse=False, sort_key=None,
-                 column_names=None):
+    def __init__(self, data=None, title=None, column_names=None, compact=False,
+                 sort=False, sort_reverse=False, sort_key=None):
         self.shape = (None, None)
         self.column_names = None
         self.compact = compact
