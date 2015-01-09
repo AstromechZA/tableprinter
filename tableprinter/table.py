@@ -67,34 +67,45 @@ class Table(object):
             self.shape,
             self.column_names)
 
-    def __str__(self):
-        """Return the 2d Table representation.
+    def _balance_columns(self, ignore_terminal_width=False):
+        terminal_width = utils.get_terminal_width() - 1
 
-        Use this for printing the table. (eg: print Table())
-        """
-        lines = []
-        max_table_width = utils.get_terminal_width()
+        column_widths = get_column_widths(self.data)
 
         if self.column_names is not None:
-            column_widths = get_column_widths(self.data + [self.column_names])
-        else:
-            column_widths = get_column_widths(self.data)
+            for i, w in enumerate(column_widths):
+                if i < len(self.column_names):
+                    column_widths[i] = max(len(self.column_names[i]), w)
 
-        current_table_width = sum(column_widths) + 4 + 3 * (len(column_widths) - 1)
-        if current_table_width > max_table_width:
-            column_widths = adjust_columns(column_widths, max_table_width)
-        elif self.title is not None and len(self.title) > (current_table_width - 4):
-            column_widths = adjust_columns(column_widths, min(len(self.title) + 4, max_table_width))
+        inner_margins = (len(column_widths) - 1) * 3
+        outer_margins = 2 * 2
+        total_margins = inner_margins + outer_margins
+
+        current_table_width = sum(column_widths) + total_margins
+
+        if self.title is not None:
+            current_table_width = max(len(self.title) + outer_margins, current_table_width)
+
+        if not ignore_terminal_width:
+            current_table_width = min(current_table_width, terminal_width)
+
+        return adjust_columns(column_widths, current_table_width - total_margins)
+
+    def lines(self):
+        """
+        Generate the 2d Table representation as a list of lines.
+        """
+        column_widths = self._balance_columns()
 
         if self.title is not None:
             l = sum(column_widths) + (len(column_widths) - 1) * 3
-            lines.append('+=' + '=' * l + '=+')
-            lines.append("| {} |".format(utils.pad_ellipse(self.title, l, align='^')))
+            yield '+=' + '=' * l + '=+'
+            yield "| \033[1m{}\033[22m |".format(utils.pad_ellipse(self.title, l, align='^'))
 
         table_hborder = '+' + '+'.join(['=' * (w+2) for w in column_widths]) + '+'
         row_hborder = '+' + '+'.join(['-' * (w+2) for w in column_widths]) + '+'
 
-        lines.append(table_hborder)
+        yield table_hborder
 
         if self.column_names is not None:
             c = []
@@ -103,20 +114,22 @@ class Table(object):
                     c.append(' ' * width)
                 else:
                     c.append(utils.pad_ellipse(self.column_names[i], width))
-            lines.append('| ' + ' : '.join(c) + ' |')
-            lines.append(table_hborder)
+            yield '| ' + ' | '.join(c) + ' |'
+            yield table_hborder
 
         for i, row in enumerate(self.data):
             if i > 0 and not self.compact:
-                lines.append(row_hborder)
+                yield row_hborder
             c = []
             for i, width in enumerate(column_widths):
                 if i >= len(row):
                     c.append(' ' * width)
                 else:
                     c.append(utils.pad_ellipse(repr(row[i]), width))
-            lines.append('| ' + ' : '.join(c) + ' |')
+            yield '| ' + ' : '.join(c) + ' |'
 
-        lines.append(table_hborder)
+        yield table_hborder
 
-        return '\n'.join(lines)
+
+    def __str__(self):
+        return '\n'.join(self.lines())

@@ -1,15 +1,15 @@
 
-def downscale(width_list, target_width, min_column_width=10):
+def downscale(width_list, target_total, min_column_width=10):
     """Selectively reduce width of the widest columns in order to fit all columns into the
-    target_width.
+    target_total.
     """
 
-    deficit = sum(width_list) - target_width
+    deficit = sum(width_list) - target_total
     if deficit <= 0:
         return width_list
 
     if len(width_list) == 1:
-        return [target_width]
+        return [target_total]
 
     cp = width_list[:]
     while(deficit > 0):
@@ -42,34 +42,29 @@ def downscale(width_list, target_width, min_column_width=10):
     return cp
 
 
-def upscale(width_list, target_width):
-    """Scale columns to fill target_width"""
+def upscale(width_list, target_total):
+    """Scale columns to fill target_total"""
 
     total = sum(width_list)
-    ratio = target_width / float(total)
+    ratio = target_total / float(total)
     scaled_widths = map(lambda w: int(w*ratio), width_list)
-    scaled_widths[-1] = scaled_widths[-1] + (target_width - sum(scaled_widths))
+    scaled_widths[-1] = scaled_widths[-1] + (target_total - sum(scaled_widths))
     return scaled_widths
 
 
-def adjust_columns(content_widths, target_width, min_column_width=8):
+def adjust_columns(content_widths, target_total, min_column_width=8):
     """This method takes in a list of content_widths, representing current column widths, as well
     as a target table width, and returns an adjusted version of content_widths which fits into the
-    target_width.
+    target_total.
     """
 
     # first identify defecit
-    margins = 4 + (len(content_widths) - 1) * 3
-
-    # determine target_width minus margins
-    target_inner_width = target_width - margins
-
+    current_width = sum(content_widths)
     # if there is no deficit, return the content_widths since these are fine
-    current_width = sum(content_widths) + margins
-    deficit = current_width - target_width
+    deficit = current_width - target_total
     if deficit == 0:
         return content_widths
     elif deficit < 0:
-        return upscale(content_widths, target_inner_width)
+        return upscale(content_widths, target_total)
     else:
-        return downscale(content_widths, target_inner_width, min_column_width)
+        return downscale(content_widths, target_total, min_column_width)
