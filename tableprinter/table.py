@@ -9,7 +9,6 @@ class Table(object):
                  sort=False, sort_reverse=False, sort_key=None,
                  column_names=None):
         self.shape = (None, None)
-        self.has_column_names = False
         self.column_names = None
         self.compact = compact
         self.set_data(data)
@@ -36,11 +35,7 @@ class Table(object):
 
         Columns will be added in order to match the number of column names provided.
         """
-        if column_names is not None:
-            self.column_names = column_names
-            self.has_column_names = True
-        else:
-            self.has_column_names = False
+        self.column_names = column_names
 
     def set_compact(self, b):
         """Set the compact flag on the Table.
@@ -80,7 +75,7 @@ class Table(object):
         lines = []
         max_table_width = utils.get_terminal_width()
 
-        if self.has_column_names:
+        if self.column_names is not None:
             column_widths = get_column_widths(self.data + [self.column_names])
         else:
             column_widths = get_column_widths(self.data)
@@ -101,7 +96,7 @@ class Table(object):
 
         lines.append(table_hborder)
 
-        if self.has_column_names:
+        if self.column_names is not None:
             c = []
             for i, width in enumerate(column_widths):
                 if i >= len(self.column_names):

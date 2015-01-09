@@ -11,7 +11,6 @@ def test_construct_with_sort():
 
 def test_construct_with_column_names():
     t = Table([['hello', 'world']], column_names=['One', 'Two'])
-    assert t.has_column_names
     assert t.column_names == ['One', 'Two']
 
 def test_change_compact():
